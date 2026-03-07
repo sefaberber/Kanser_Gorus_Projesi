@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroAI Vision | Derin Öğrenme MR Analizi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Arka planda karanlık ve teknolojik bir degrade (gradient) renk */
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Cam görünümlü (Glassmorphism) ana panel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Dekoratif parlayan arka plan efektleri */
+        .glow-circle {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: #3b82f6;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            top: -20px;
+            left: -20px;
+            opacity: 0.6;
+        }
+
+        .glow-circle.right {
+            background: #8b5cf6;
+            top: auto;
+            bottom: -20px;
+            left: auto;
+            right: -20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Özel Tasarım Dosya Yükleme Alanı */
+        .upload-area {
+            border: 2px dashed rgba(96, 165, 250, 0.5);
+            border-radius: 16px;
+            padding: 40px 20px;
+            background: rgba(15, 23, 42, 0.4);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .upload-area:hover {
+            border-color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.2);
+        }
+
+        /* Standart input'u görünmez yapıp tüm alana yayıyoruz */
+        .upload-area input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .upload-text {
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .file-name-display {
+            color: #60a5fa;
+            font-size: 13px;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        /* Fütüristik Analiz Butonu */
+        button {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Sonuç Kartları (Neon Efektli) */
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-success { border-left: 5px solid #10b981; box-shadow: -10px 0 30px -10px rgba(16, 185, 129, 0.3); }
+        .result-warning { border-left: 5px solid #f59e0b; box-shadow: -10px 0 30px -10px rgba(245, 158, 11, 0.3); }
+        .result-danger { border-left: 5px solid #ef4444; box-shadow: -10px 0 30px -10px rgba(239, 68, 68, 0.3); }
+
+        .result-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .result-success .result-value { color: #34d399; }
+        .result-warning .result-value { color: #fbbf24; }
+        .result-danger .result-value { color: #f87171; }
+
+        /* Yüzdelik Güven Barı */
+        .confidence-wrapper {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .result-success .confidence-fill { background: linear-gradient(90deg, #059669, #34d399); }
+        .result-warning .confidence-fill { background: linear-gradient(90deg, #d97706, #fbbf24); }
+        .result-danger .confidence-fill { background: linear-gradient(90deg, #b91c1c, #f87171); }
+
+        .confidence-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .error-msg {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel">
+        <div class="glow-circle"></div>
+        <div class="glow-circle right"></div>
+
+        <div style="font-size: 45px; margin-bottom: 10px;">🧠</div>
+        <h1>NeuroAI Vision</h1>
+        <p class="subtitle">Derin Öğrenme Tabanlı Tıbbi Görüntü İşleme</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="upload-area">
+                <span class="upload-icon">📸</span>
+                <span class="upload-text">MR Görüntüsünü Seçin veya Sürükleyin</span>
+                <div id="file-name" class="file-name-display">Henüz dosya seçilmedi (.jpg, .png)</div>
+                <input type="file" name="file" accept="image/*" required onchange="document.getElementById('file-name').textContent = this.files[0] ? this.files[0].name : 'Henüz dosya seçilmedi';">
+            </div>
+
+            <button type="submit">SİSTEMİ ÇALIŞTIR</button>
+        </form>
+
+        {% if hata %}
+            <div class="error-msg">⚠️ {{ hata }}</div>
+        {% endif %}
+
+        {% if sonuc %}
+            {% if "Kötü Huylu" in sonuc.sinif %}
+                <div class="result-container result-danger">
+            {% elif "İyi Huylu" in sonuc.sinif %}
+                <div class="result-container result-warning">
+            {% else %}
+                <div class="result-container result-success">
+            {% endif %}
+                
+                <p class="result-label">Yapay Zeka Teşhisi</p>
+                <p class="result-value">{{ sonuc.sinif }}</p>
+
+                <div class="confidence-text">
+                    <span>Ağ Güven Oranı (Accuracy)</span>
+                    <span style="font-weight: 600;">%{{ sonuc.oran }}</span>
+                </div>
+                <div class="confidence-wrapper">
+                    <div class="confidence-fill" style="width: 0%;" onload="this.style.width='{{ sonuc.oran }}%';"></div>
+                </div>
+                
+                <script>
+                    setTimeout(() => {
+                        document.querySelector('.confidence-fill').style.width = '{{ sonuc.oran }}%';
+                    }, 100);
+                </script>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
