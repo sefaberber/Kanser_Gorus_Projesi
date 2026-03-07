@@ -5,7 +5,7 @@ import numpy as np
 print("\nModel yükleniyor, lütfen bekleyin...")
 model = tf.keras.models.load_model('kanser_tespit_modeli.keras')
 
-# 2. Test Edeceğimiz Fotoğrafın Yolu (BURAYI DEĞİŞTİRECEĞİZ)
+# 2. Test Edeceğimiz Fotoğrafın Yolu 
 resim_yolu = 'Testing/glioma_tumor/image(10).jpg' 
 
 # 3. Fotoğrafı Yapay Zekanın Anlayacağı 224x224 Formata Çevirme
