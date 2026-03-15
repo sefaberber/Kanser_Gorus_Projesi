@@ -4,4 +4,4 @@ numpy<2.0.0
 pillow
 gunicorn
 werkzeug
-keros
+keras

@@ -3,6 +3,12 @@ import tensorflow as tf
 import numpy as np
 import os
 from werkzeug.utils import secure_filename
+from tensorflow.keras.layers import Dense
+
+class OzelDense(Dense):
+    def __init__(self, **kwargs):
+        kwargs.pop('quantization_config', None)
+        super().__init__(**kwargs)
 
 # Web sunucusunu başlatıyoruz
 app = Flask(__name__)
@@ -10,7 +16,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Yapay Zeka Modelimizi Yüklüyoruz
 print("Yapay Zeka Modeli Web Sitesi İçin Hazırlanıyor...")
-model = tf.keras.models.load_model('kanser_tespit_modeli.keras')
+model = tf.keras.models.load_model('kanser_tespit_modeli.keras', custom_objects={'Dense': OzelDense})
 siniflar = ['Kötü Huylu Tümör (Glioma)', 'İyi Huylu Tümör (Meningioma)', 'Normal (Kanser Yok)']
 
 # Ana Sayfa Yönlendirmesi
