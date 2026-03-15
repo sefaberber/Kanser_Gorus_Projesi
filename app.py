@@ -1,9 +1,9 @@
+from tensorflow.keras import layers, models, Input
 from flask import Flask, render_template, request
 import tensorflow as tf
 import numpy as np
 import os
 from werkzeug.utils import secure_filename
-
 
 # Web sunucusunu başlatıyoruz
 app = Flask(__name__)
@@ -11,7 +11,28 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Yapay Zeka Modelimizi Yüklüyoruz
 print("Yapay Zeka Modeli Web Sitesi İçin Hazırlanıyor...")
-model = tf.keras.models.load_model('kanser_tespit_modeli.h5')
+# Yapay Zeka Modelimizi Yüklüyoruz
+print("Yapay Zeka Modeli Web Sitesi İçin Hazırlanıyor...")
+
+# 1. Modelin İskeletini Sıfırdan Çiziyoruz
+model = models.Sequential([
+    Input(shape=(224, 224, 3)),
+    layers.Rescaling(1./255),
+    layers.Conv2D(32, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(3, activation='softmax')
+])
+
+# 2. Sadece Saf Ağırlıkları (.h5 içinden) Yüklüyoruz (Hatalı ayarlar yok sayılıyor!)
+model.load_weights('kanser_tespit_modeli.h5')
+
+siniflar = ['Kötü Huylu Tümör (Glioma)', 'İyi Huylu Tümör (Meningioma)', 'Normal (Kanser Yok)']
 siniflar = ['Kötü Huylu Tümör (Glioma)', 'İyi Huylu Tümör (Meningioma)', 'Normal (Kanser Yok)']
 
 # Ana Sayfa Yönlendirmesi
