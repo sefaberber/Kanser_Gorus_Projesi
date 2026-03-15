@@ -13,7 +13,6 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 print("Yapay Zeka Modeli Web Sitesi İçin Hazırlanıyor...")
 # Yapay Zeka Modelimizi Yüklüyoruz
 print("Yapay Zeka Modeli Web Sitesi İçin Hazırlanıyor...")
-
 # 1. Modelin İskeletini Sıfırdan Çiziyoruz
 model = models.Sequential([
     Input(shape=(224, 224, 3)),
